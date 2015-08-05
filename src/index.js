@@ -42,23 +42,27 @@ logo.requestUpdate(spinner);
 var Engine = require('../core/Engine');
 var Surface = require('../core/Surface');
 var Modifier = require('../core/Modifier');
+var Transform = require('../core/Transform');
 
 var ctx = Engine.createContext();
 
 var modifier = new Modifier({
-    size: [100, 100],
+    size: [undefined, 100],
     align: [0.5, 0.5],
-    origin: [0.5, 0.5]
+    origin: [0.5, 0.5],
+    proportions: [0.2, 1],
+    opacity: 0.5,
+    transform: Transform.thenMove(Transform.rotateZ(Math.PI / 3), [100, 50, 0])
 });
 
 var surface = new Surface({
-    size: [100, true],
     content: 'HI',
     properties: {
         backgroundColor: 'red',
         color: 'white',
         textAlign: 'center',
-        fontSize: '40px'
+        fontSize: '40px',
+        borderRadius: '10px'
     }
 });
 

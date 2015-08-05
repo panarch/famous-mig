@@ -26,6 +26,15 @@ function Modifier(options) {
 
 Modifier.prototype.transformFrom = function transformFrom(transform) {
     this.transform = transform;
+    if (!this.node) return;
+
+    var position = this.transform.getPosition();
+    var rotation = this.transform.getRotation();
+    var scale = this.transform.getScale();
+
+    if (position) this.node.setPosition.apply(this.node, position);
+    if (rotation) this.node.setRotation.apply(this.node, rotation);
+    if (scale) this.node.setScale.apply(this.node, scale);
 };
 
 Modifier.prototype.opacityFrom = function opacityFrom(opacity) {
@@ -39,21 +48,24 @@ Modifier.prototype.originFrom = function originFrom(origin) {
     this.origin = origin;
     if (!this.node) return;
 
-    this.node.setOrigin(origin[0], origin[1]);
-    this.node.setMountPoint(origin[0], origin[1]);
+    this.node.setOrigin.apply(this.node, origin);
+    this.node.setMountPoint.apply(this.node, origin);
 };
 
 Modifier.prototype.alignFrom = function alignFrom(align) {
     this.align = align;
     if (!this.node) return;
 
-    this.node.setAlign(align[0], align[1]);
+    this.node.setAlign.apply(this.node, align);
 };
 
 Modifier.prototype.sizeFrom = Surface.prototype.setSize;
 
 Modifier.prototype.proportionsFrom = function proportionsFrom(proportions) {
     this.proportions = proportions;
+    if (!this.node) return;
+
+    this.node.setProportionalSize.apply(this.node, proportions);
 };
 
 Modifier.prototype.setTransform = Modifier.prototype.transformFrom;
@@ -77,7 +89,7 @@ Modifier.prototype.setNode = function setNode(node) {
     if (this.align) this.alignFrom(this.align);
     if (this.opacity !== null) this.opacityFrom(this.opacity);
     if (this.transform) this.transformFrom(this.transform);
-    // do something; applying size, origin, align, opacity and transform...
+    if (this.proportions) this.proportionsFrom(this.proportions);
 };
 
 module.exports = Modifier;
