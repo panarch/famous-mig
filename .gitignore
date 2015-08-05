@@ -1,0 +1,8 @@
+dist
+public/*.bundle.js
+public/bundle.js
+node_modules
+*.log
+*.swp
+*.swo
+.DS_Store
