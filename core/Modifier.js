@@ -3,9 +3,11 @@
 'use strict';
 
 var Surface = require('./Surface');
+var View = require('./View');
 
 function Modifier(options) {
     this.node = null;
+    this._queue = [];
 
     this.transform = null;
     this.opacity = null;
@@ -74,15 +76,15 @@ Modifier.prototype.setOrigin = Modifier.prototype.originFrom;
 Modifier.prototype.setSize = Surface.prototype.setSize;
 Modifier.prototype.setProportions = Modifier.prototype.proportionsFrom;
 
-Modifier.prototype.add = function add(view) {
-    var child = this.node.addChild();
-    view.setNode(child);
-
-    return child;
-};
+Modifier.prototype.add = View.prototype.add;
+Modifier.prototype._setNode = View.prototype._setNode;
 
 Modifier.prototype.setNode = function setNode(node) {
-    this.node = node;
+    this._setNode(node);
+
+    for (var i = 0; i < this._queue.length; i++) {
+        this._queue[i].setNode(this.node.addChild());
+    }
 
     if (this.size) this.sizeFrom(this.size);
     if (this.origin) this.originFrom(this.origin);

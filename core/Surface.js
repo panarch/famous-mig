@@ -151,7 +151,7 @@ Surface.prototype.setSize = function setSize(size) {
 
 };
 
-Surface.prototype.setNode = function setNode(node) {
+Surface.prototype._setNode = function _setNode(node) {
     this.node = node;
     // content, size, classes, properties and attributes
     this.el = new DOMElement(this.node, {
@@ -163,6 +163,10 @@ Surface.prototype.setNode = function setNode(node) {
     });
 
     if (this.size) this.setSize(this.size);
+};
+
+Surface.prototype.setNode = function setNode(node) {
+    this._setNode(node);
 };
 
 module.exports = Surface;

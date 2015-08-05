@@ -102,6 +102,6 @@ var s3 = new Surface({
 });
 
 ctx.add(modifier).add(surface);
-ctx.add(container);
 container.add(m2).add(s2);
 container.add(m3).add(s3);
+ctx.add(container);
