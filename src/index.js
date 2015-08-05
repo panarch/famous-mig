@@ -43,6 +43,7 @@ var Engine = require('../core/Engine');
 var Surface = require('../core/Surface');
 var Modifier = require('../core/Modifier');
 var Transform = require('../core/Transform');
+var ContainerSurface = require('../surfaces/ContainerSurface');
 
 var ctx = Engine.createContext();
 
@@ -66,4 +67,41 @@ var surface = new Surface({
     }
 });
 
+var container = new ContainerSurface({
+    size: [200, 200],
+    properties: {
+        border: '1px',
+        backgroundColor: '#eaeaea'
+    }
+});
+
+var m2 = new Modifier({
+    size: [30, 30],
+    align: [0.1, 0],
+    origin: [0, 0],
+    transform: Transform.translate(0, 10)
+});
+
+var s2 = new Surface({
+    properties: {
+        backgroundColor: 'blue'
+    }
+});
+
+var m3 = new Modifier({
+    size: [40, 40],
+    align: [0.9, 0.9],
+    origin: [1, 1],
+    transform: Transform.rotateZ(Math.PI / 6)
+});
+
+var s3 = new Surface({
+    properties: {
+        backgroundColor: 'green'
+    }
+});
+
 ctx.add(modifier).add(surface);
+ctx.add(container);
+container.add(m2).add(s2);
+container.add(m3).add(s3);
