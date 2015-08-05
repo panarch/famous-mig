@@ -41,8 +41,15 @@ logo.requestUpdate(spinner);
 
 var Engine = require('../core/Engine');
 var Surface = require('../core/Surface');
+var Modifier = require('../core/Modifier');
 
 var ctx = Engine.createContext();
+
+var modifier = new Modifier({
+    size: [100, 100],
+    align: [0.5, 0.5],
+    origin: [0.5, 0.5]
+});
 
 var surface = new Surface({
     size: [100, true],
@@ -55,4 +62,4 @@ var surface = new Surface({
     }
 });
 
-ctx.add(surface);
+ctx.add(modifier).add(surface);

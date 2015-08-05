@@ -14,7 +14,7 @@ View.prototype.add = function add(view) {
     var child = this.node.addChild();
     view.setNode(child);
 
-    return this;
+    return view;
 };
 
 module.exports = View;
