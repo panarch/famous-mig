@@ -45,6 +45,8 @@ var Modifier = require('../core/Modifier');
 var Transform = require('../core/Transform');
 var ImageSurface = require('../surfaces/ImageSurface');
 var ContainerSurface = require('../surfaces/ContainerSurface');
+var SequentialLayout = require('../views/SequentialLayout');
+var Utility = require('../utilities/Utility');
 
 var ctx = Engine.createContext();
 
@@ -54,7 +56,7 @@ var modifier = new Modifier({
     origin: [0.5, 0.5],
     proportions: [0.2, 1],
     opacity: 0.5,
-    transform: Transform.thenMove(Transform.rotateZ(Math.PI / 3), [100, 50, 0])
+    transform: Transform.thenMove(Transform.rotateZ(Math.PI / 3), [200, 50, 0])
 });
 
 var surface = new Surface({
@@ -103,17 +105,34 @@ var s3 = new Surface({
 });
 
 var m4 = new Modifier({
-    size: [80, 80],
+    size: [200, 80],
     align: [0.5, 0.5],
     origin: [0.5, 0.5]
 });
 
+var v1 = new SequentialLayout({
+    direction: Utility.Direction.X
+});
+
 var s4 = new ImageSurface({
+    size: [80, 80],
     content: './images/famous_logo.png'
 });
+
+var s5 = new Surface({
+    size: [120, 80],
+    content: 'Example',
+    properties: {
+        textAlign: 'center',
+        lineHeight: '80px',
+        backgroundColor: '#eaeaea'
+    }
+});
+
+v1.sequenceFrom([s4, s5]);
 
 ctx.add(modifier).add(surface);
 container.add(m2).add(s2);
 container.add(m3).add(s3);
 ctx.add(container);
-ctx.add(m4).add(s4);
+ctx.add(m4).add(v1);

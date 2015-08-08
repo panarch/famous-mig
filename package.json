@@ -9,8 +9,8 @@
     "start": "npm run build && serve --compress public/ -p 8671",
     "dev": "node ./bin/dev.js",
     "test": "npm run lint -s && npm run build",
-    "lint-jscs": "jscs src/ core/ surfaces/",
-    "lint-eslint": "eslint --ignore-path .gitignore src/ core/ surfaces/",
+    "lint-jscs": "jscs src/ core/ surfaces/ views/ utilities/",
+    "lint-eslint": "eslint --ignore-path .gitignore src/ core/ surfaces/ views/ utilities/",
     "lint": "npm run lint-eslint && npm run lint-jscs"
   },
   "repository": {
