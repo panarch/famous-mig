@@ -43,6 +43,7 @@ var Engine = require('../core/Engine');
 var Surface = require('../core/Surface');
 var Modifier = require('../core/Modifier');
 var Transform = require('../core/Transform');
+var ImageSurface = require('../surfaces/ImageSurface');
 var ContainerSurface = require('../surfaces/ContainerSurface');
 
 var ctx = Engine.createContext();
@@ -101,7 +102,18 @@ var s3 = new Surface({
     }
 });
 
+var m4 = new Modifier({
+    size: [80, 80],
+    align: [0.5, 0.5],
+    origin: [0.5, 0.5]
+});
+
+var s4 = new ImageSurface({
+    content: './images/famous_logo.png'
+});
+
 ctx.add(modifier).add(surface);
 container.add(m2).add(s2);
 container.add(m3).add(s3);
 ctx.add(container);
+ctx.add(m4).add(s4);
