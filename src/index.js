@@ -45,19 +45,24 @@ var Modifier = require('../core/Modifier');
 var Transform = require('../core/Transform');
 var ImageSurface = require('../surfaces/ImageSurface');
 var ContainerSurface = require('../surfaces/ContainerSurface');
+var StateModifier = require('../modifiers/StateModifier');
 var SequentialLayout = require('../views/SequentialLayout');
 var Utility = require('../utilities/Utility');
+var Easing = require('../transitions/Easing');
 
 var ctx = Engine.createContext();
 
-var modifier = new Modifier({
+var modifier = new StateModifier({
     size: [undefined, 100],
-    align: [0.5, 0.5],
+    align: [0.7, 0.5],
     origin: [0.5, 0.5],
     proportions: [0.2, 1],
-    opacity: 0.5,
-    transform: Transform.thenMove(Transform.rotateZ(Math.PI / 3), [200, 50, 0])
+    opacity: 0.5
+    //transform: Transform.thenMove(Transform.rotateZ(Math.PI / 3), [200, 50, 0])
 });
+
+modifier.setAlign([0.5, 0.5], { duration: 2000, curve: Easing.inExpo });
+modifier.setTransform(Transform.thenMove(Transform.rotateZ(Math.PI / 3), [200, 50, 0]), { duration: 2000, curve: Easing.inExpo });
 
 var surface = new Surface({
     content: 'HI',
