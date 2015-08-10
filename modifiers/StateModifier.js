@@ -2,6 +2,7 @@
 
 'use strict';
 
+var DOMElement = require('famous/dom-renderables/DOMElement');
 var Position = require('famous/components/Position');
 var Rotation = require('famous/components/Rotation');
 var Scale = require('famous/components/Scale');
@@ -52,31 +53,40 @@ function StateModifier(options) {
     }
 }
 
-function _setComponentValue(component, value, options) {
-    component.set.apply(component, value.concat(options));
+function _setComponentValue(component, value, options, callback) {
+    component.set.apply(component, value.concat(options).concat(callback));
 }
 
-StateModifier.prototype.setTransform = function setTransform(transform, options) {
+StateModifier.prototype.setTransform = function setTransform(transform, options, callback) {
     var position = transform.getPosition();
     var rotation = transform.getRotation();
     var scale = transform.getScale();
 
     while (position && position.length < 3) position.push(null);
     while (rotation && rotation.length < 3) rotation.push(null);
-    while (scale && scale.length < 3) scale.push(null);
+    while (scale && scale.length < 3) scale.push(1);
+
+    var called = false;
+    var _callback = callback;
+    callback = function() {
+        if (!called) {
+            called = true;
+            if (_callback) _callback();
+        }
+    };
 
     if (this.node) {
-        if (position) _setComponentValue(this._positionComp, position, options);
-        if (rotation) _setComponentValue(this._rotationComp, rotation, options);
-        if (scale) _setComponentValue(this._scaleComp, scale, options);
+        if (position) _setComponentValue(this._positionComp, position, options, callback);
+        if (rotation) _setComponentValue(this._rotationComp, rotation, options, callback);
+        if (scale) _setComponentValue(this._scaleComp, scale, options, callback);
     }
     else if (options) {
         Timer.after((function() {
             this.transform = transform;
             this.transformOptions = options;
-            if (position) _setComponentValue(this._positionComp, position, options);
-            if (rotation) _setComponentValue(this._rotationComp, rotation, options);
-            if (scale) _setComponentValue(this._scaleComp, scale, options);
+            if (position) _setComponentValue(this._positionComp, position, options, callback);
+            if (rotation) _setComponentValue(this._rotationComp, rotation, options, callback);
+            if (scale) _setComponentValue(this._scaleComp, scale, options, callback);
         }).bind(this), 1);
 
         return;
@@ -86,15 +96,15 @@ StateModifier.prototype.setTransform = function setTransform(transform, options)
     this.transformOptions = options;
 };
 
-StateModifier.prototype.setOpacity = function setOpacity(opacity, options) {
+StateModifier.prototype.setOpacity = function setOpacity(opacity, options, callback) {
     if (this.node) {
-        this._opacityComp.set(opacity, options);
+        this._opacityComp.set(opacity, options, callback);
     }
     else if (options) {
         Timer.after((function() {
             this.opacity = opacity;
             this.opacityOptions = options;
-            this._opacityComp.set(opacity, options);
+            this._opacityComp.set(opacity, options, callback);
         }).bind(this), 1);
 
         return;
@@ -104,18 +114,18 @@ StateModifier.prototype.setOpacity = function setOpacity(opacity, options) {
     this.opacityOptions = options;
 };
 
-StateModifier.prototype.setOrigin = function setOrigin(origin, options) {
+StateModifier.prototype.setOrigin = function setOrigin(origin, options, callback) {
     while (origin.length < 3) origin.push(null);
 
     if (this.node) {
-        _setComponentValue(this._originComp, origin, options);
+        _setComponentValue(this._originComp, origin, options, callback);
         _setComponentValue(this._mountPointComp, origin, options);
     }
     else if (options) {
         Timer.after((function() {
             this.origin = origin;
             this.originOptions = options;
-            _setComponentValue(this._originComp, origin, options);
+            _setComponentValue(this._originComp, origin, options, callback);
             _setComponentValue(this._mountPointComp, origin, options);
         }).bind(this), 1);
 
@@ -126,17 +136,17 @@ StateModifier.prototype.setOrigin = function setOrigin(origin, options) {
     this.originOptions = options;
 };
 
-StateModifier.prototype.setAlign = function setAlign(align, options) {
+StateModifier.prototype.setAlign = function setAlign(align, options, callback) {
     while (align.length < 3) align.push(null);
 
     if (this.node) {
-        _setComponentValue(this._alignComp, align, options);
+        _setComponentValue(this._alignComp, align, options, callback);
     }
     else if (options) {
         Timer.after((function() {
             this.align = align;
             this.alignOptions = options;
-            _setComponentValue(this._alignComp, align, options);
+            _setComponentValue(this._alignComp, align, options, callback);
         }).bind(this), 1);
 
         return;
@@ -160,6 +170,7 @@ StateModifier.prototype._setNode = View.prototype._setNode;
 
 StateModifier.prototype.setNode = function setNode(node) {
     this._setNode(node);
+    this.el = new DOMElement(node, {});
 
     for (var i = 0; i < this._queue.length; i++) {
         this._queue[i].setNode(this.node.addChild());
