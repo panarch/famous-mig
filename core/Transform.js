@@ -21,6 +21,9 @@ Transform.prototype.getScale = function getScale() {
 };
 
 Transform.identity = new Transform();
+Transform.identity._position = [0, 0, 0];
+Transform.identity._rotation = [0, 0, 0];
+Transform.identity._scale = [1, 1, 1];
 
 Transform.translate = function(x, y, z) {
     var transform = new Transform();

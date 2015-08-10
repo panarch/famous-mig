@@ -4,12 +4,18 @@
 
 var Size = require('famous/components/Size');
 var DOMElement = require('famous/dom-renderables/DOMElement');
+var EventMap = require('famous/dom-renderers/events/EventMap');
+
+var EventHandler = require('./EventHandler');
 
 function Surface(options) {
     this.node = null;
     this.el = null;
-
-    this.options = {};
+    this._uiEvent = {};
+    this._eventInput = new EventHandler();
+    this._eventOutput = new EventHandler();
+    EventHandler.setInputHandler(this, this._eventInput);
+    EventHandler.setOutputHandler(this, this._eventOutput);
 
     this.properties = {};
     this.attributes = {};
@@ -18,6 +24,16 @@ function Surface(options) {
     this.size = null;
 
     if (options) this.setOptions(options);
+
+    this._on = this.on;
+    this.on = (function(type, handler) {
+        if (EventMap[type]) {
+            this._uiEvent[type] = handler;
+            if (this.node) this.node.addUIEvent(type);
+        }
+
+        this._on(type, handler);
+    }).bind(this);
 
     this._currentTarget = null;
 }
@@ -110,6 +126,9 @@ Surface.prototype.setOptions = function setOptions(options) {
 };
 
 Surface.prototype.getSize = function getSize() {
+    if (this.node)
+        return this.node.getSize();
+
     return this.size;
 };
 
@@ -152,6 +171,8 @@ Surface.prototype.setSize = function setSize(size) {
 };
 
 Surface.prototype._setNode = function _setNode(node) {
+    if (this.el) return;
+
     this.node = node;
     // content, size, classes, properties and attributes
     this.el = new DOMElement(this.node, {
@@ -163,6 +184,22 @@ Surface.prototype._setNode = function _setNode(node) {
     });
 
     if (this.size) this.setSize(this.size);
+
+    // ui events
+    var eventNames = Object.keys(this._uiEvent);
+    for (var i = 0; i < eventNames.length; i++) {
+        this.node.addUIEvent(eventNames[i]);
+    }
+
+    this.node.onReceive = (function(event, payload) {
+        if (!this._uiEvent[event]) return;
+
+        // not supported
+        payload.preventDefault = function() {};
+        payload.stopPropagation = function() {};
+
+        this._uiEvent[event](payload);
+    }).bind(this);
 };
 
 Surface.prototype.setNode = function setNode(node) {

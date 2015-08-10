@@ -2,8 +2,15 @@
 
 'use strict';
 
+var EventHandler = require('./EventHandler');
+
 function View() {
     this.node = null;
+    this._eventInput = new EventHandler();
+    this._eventOutput = new EventHandler();
+    EventHandler.setInputHandler(this, this._eventInput);
+    EventHandler.setOutputHandler(this, this._eventOutput);
+
     this._queue = [];
 }
 
