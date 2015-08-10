@@ -2,6 +2,8 @@
 
 'use strict';
 
+var Size = require('famous/components/Size');
+
 var View = require('../core/View');
 var Timer = require('../utilities/Timer');
 var Utility = require('../utilities/Utility');
@@ -9,7 +11,7 @@ var Utility = require('../utilities/Utility');
 function SequentialLayout(options) {
     View.apply(this, arguments);
 
-    this.direction = options.direction !== undefined ?
+    this.direction = options && options.direction !== undefined ?
         options.direction :
         Utility.Direction.Y;
 }
@@ -22,25 +24,31 @@ SequentialLayout.prototype._sequenceFrom = function _sequenceFrom(views) {
 
     for (var i = 0; i < views.length; i++) {
         var view = views[i];
-        if (!view.node)
-            this.add(view);
-
         var node = view.node;
+        var sizeMode = node.getSizeMode();
         var size = node.getAbsoluteSize();
 
         if (this.direction === Utility.Direction.X) {
             node.setPosition(length, 0);
-            length += size[0];
+            if (sizeMode[0] === Size.ABSOLUTE)
+                length += size[0];
         }
         else {
             node.setPosition(0, length);
-            length += size[1];
+            if (sizeMode[1] === Size.ABSOLUTE)
+                length += size[1];
         }
     }
 };
 
 SequentialLayout.prototype.sequenceFrom = function sequenceFrom(views) {
     // run it after all nodes are initialized
+    for (var i = 0; i < views.length; i++) {
+        var view = views[i];
+        if (!view.node)
+            this.add(view);
+    }
+
     Timer.after(this._sequenceFrom.bind(this, views), 1);
 };
 
