@@ -13,6 +13,8 @@ View.prototype._setNode = function _setNode(node) {
     for (var i = 0; i < this._queue.length; i++) {
         this._queue[i].setNode(this.node.addChild());
     }
+
+    this._queue = [];
 };
 
 View.prototype.setNode = function setNode(node) {
