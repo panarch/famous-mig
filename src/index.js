@@ -48,6 +48,7 @@ var CanvasSurface = require('../surfaces/CanvasSurface');
 var ContainerSurface = require('../surfaces/ContainerSurface');
 var StateModifier = require('../modifiers/StateModifier');
 var SequentialLayout = require('../views/SequentialLayout');
+var GridLayout = require('../views/GridLayout');
 var Utility = require('../utilities/Utility');
 var Easing = require('../transitions/Easing');
 
@@ -110,13 +111,16 @@ var s3 = new Surface({
     }
 });
 
-var m4 = new Modifier({
+/**
+ * Sequential Layout
+ */
+var sequentialModifier = new Modifier({
     size: [200, 80],
     align: [0.5, 0.5],
     origin: [0.5, 0.5]
 });
 
-var v1 = new SequentialLayout({
+var sequentialLayout = new SequentialLayout({
     direction: Utility.Direction.X
 });
 
@@ -135,6 +139,11 @@ var s5 = new Surface({
     }
 });
 
+sequentialLayout.sequenceFrom([s4, s5]);
+
+/*
+ * CanvasSurface
+ */
 var m5 = new Modifier({
     size: [100, 100],
     align: [0, 0],
@@ -160,11 +169,45 @@ s6.on('deploy', function() {
     ctx.stroke();
 });
 
-v1.sequenceFrom([s4, s5]);
+/*
+ * GridLayout
+ */
+var gridModifier = new Modifier({
+    size: [200, 200],
+    transform: Transform.translate(0, 300)
+});
+
+var gridLayout = new GridLayout({
+    dimensions: [3, 4]
+});
+
+function getItem() {
+    var r = (Math.random() * 256) | 0;
+    var g = (Math.random() * 256) | 0;
+    var b = (Math.random() * 256) | 0;
+    var color = 'rgb({r},{g},{b})'
+        .replace('{r}', r)
+        .replace('{g}', g)
+        .replace('{b}', b);
+
+    return new Surface({
+        properties: {
+            backgroundColor: color
+        }
+    });
+}
+
+var items = [];
+for (var i = 0; i < 10; i++) {
+    items.push(getItem());
+}
+
+gridLayout.sequenceFrom(items);
 
 ctx.add(modifier).add(surface);
 container.add(m2).add(s2);
 container.add(m3).add(s3);
 ctx.add(container);
-ctx.add(m4).add(v1);
+ctx.add(sequentialModifier).add(sequentialLayout);
 ctx.add(m5).add(s6);
+ctx.add(gridModifier).add(gridLayout);
