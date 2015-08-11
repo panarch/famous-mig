@@ -176,12 +176,22 @@ Surface.prototype.setSize = function setSize(size) {
         this.node.setProportionalSize(proportionalSize[0], proportionalSize[1]);
 };
 
+Surface.prototype._initTarget = function() {
+    var query = '[data-fa-path=\'' + this.node.getLocation() + '\']';
+    var elem = document.querySelector(query);
+    if (elem) {
+        this._currentTarget = elem;
+        this.deploy(elem);
+        return;
+    }
+
+    Timer.after(this._initTarget.bind(this), 1);
+};
+
 Surface.prototype._setNode = function _setNode(node) {
     if (this.el) return;
 
     this.node = node;
-    if (this.useTarget)
-        this.attributes.id = this.node.getLocation();
 
     // content, size, classes, properties and attributes
     this.el = new DOMElement(this.node, {
@@ -210,18 +220,8 @@ Surface.prototype._setNode = function _setNode(node) {
         this._uiEvent[event](payload);
     }).bind(this);
 
-    function initCurrentTarget() {
-        var elem = document.getElementById(this.node.getLocation());
-        if (elem) {
-            this._currentTarget = elem;
-            this.deploy();
-        }
-        else
-            Timer.after(initCurrentTarget.bind(this), 1);
-    }
-
     if (this.useTarget)
-        Timer.after(initCurrentTarget.bind(this), 2);
+        Timer.after(this._initTarget.bind(this), 2);
 };
 
 Surface.prototype.setNode = function setNode(node) {
