@@ -1,5 +1,10 @@
 // @author Taehoon Moon 2015
 
+/*
+ * [CAUTION]
+ * Because of _currentTarget support, worker mode is not available.
+ */
+
 'use strict';
 
 var Size = require('famous/components/Size');
@@ -7,6 +12,7 @@ var DOMElement = require('famous/dom-renderables/DOMElement');
 var EventMap = require('famous/dom-renderers/events/EventMap');
 
 var EventHandler = require('./EventHandler');
+var Timer = require('../utilities/Timer');
 
 function Surface(options) {
     this.node = null;
@@ -22,6 +28,8 @@ function Surface(options) {
     this.content = '';
     this.classList = [];
     this.size = null;
+    this.useTarget = false;
+    this._currentTarget = null;
 
     if (options) this.setOptions(options);
 
@@ -34,8 +42,6 @@ function Surface(options) {
 
         this._on(type, handler);
     }).bind(this);
-
-    this._currentTarget = null;
 }
 
 Surface.prototype.constructor = Surface;
@@ -122,6 +128,7 @@ Surface.prototype.setOptions = function setOptions(options) {
     if (options.properties) this.setProperties(options.properties);
     if (options.attributes) this.setAttributes(options.attributes);
     if (options.content) this.setContent(options.content);
+    if (options.useTarget) this.useTarget = true;
     return this;
 };
 
@@ -167,13 +174,15 @@ Surface.prototype.setSize = function setSize(size) {
 
     if (proportionalDirty)
         this.node.setProportionalSize(proportionalSize[0], proportionalSize[1]);
-
 };
 
 Surface.prototype._setNode = function _setNode(node) {
     if (this.el) return;
 
     this.node = node;
+    if (this.useTarget)
+        this.attributes.id = this.node.getLocation();
+
     // content, size, classes, properties and attributes
     this.el = new DOMElement(this.node, {
         tagName: this.elementType,
@@ -200,10 +209,27 @@ Surface.prototype._setNode = function _setNode(node) {
 
         this._uiEvent[event](payload);
     }).bind(this);
+
+    function initCurrentTarget() {
+        var elem = document.getElementById(this.node.getLocation());
+        if (elem) {
+            this._currentTarget = elem;
+            this.deploy();
+        }
+        else
+            Timer.after(initCurrentTarget.bind(this), 1);
+    }
+
+    if (this.useTarget)
+        Timer.after(initCurrentTarget.bind(this), 2);
 };
 
 Surface.prototype.setNode = function setNode(node) {
     this._setNode(node);
+};
+
+Surface.prototype.deploy = function deploy() {
+    this.eventOutput.emit('deploy');
 };
 
 module.exports = Surface;

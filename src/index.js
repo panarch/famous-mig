@@ -44,6 +44,7 @@ var Surface = require('../core/Surface');
 var Modifier = require('../core/Modifier');
 var Transform = require('../core/Transform');
 var ImageSurface = require('../surfaces/ImageSurface');
+var CanvasSurface = require('../surfaces/CanvasSurface');
 var ContainerSurface = require('../surfaces/ContainerSurface');
 var StateModifier = require('../modifiers/StateModifier');
 var SequentialLayout = require('../views/SequentialLayout');
@@ -134,6 +135,31 @@ var s5 = new Surface({
     }
 });
 
+var m5 = new Modifier({
+    size: [100, 100],
+    align: [0, 0],
+    origin: [0, 0],
+    transform: Transform.translate(0, 200)
+});
+
+var s6 = new CanvasSurface({
+    canvasSize: [200, 200],
+    properties: {
+        backgroundColor: '#aeaeae'
+    }
+});
+
+s6.on('deploy', function() {
+    // test drawing: white circle
+    var ctx = s6.getContext('2d');
+    var w = s6.getSize()[0];
+    ctx.beginPath();
+    ctx.arc(w, w, 30, -0.5 * Math.PI, 1.5 * Math.PI);
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 10;
+    ctx.stroke();
+});
+
 v1.sequenceFrom([s4, s5]);
 
 ctx.add(modifier).add(surface);
@@ -141,3 +167,4 @@ container.add(m2).add(s2);
 container.add(m3).add(s3);
 ctx.add(container);
 ctx.add(m4).add(v1);
+ctx.add(m5).add(s6);
