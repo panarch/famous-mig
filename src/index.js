@@ -49,6 +49,7 @@ var ContainerSurface = require('../surfaces/ContainerSurface');
 var StateModifier = require('../modifiers/StateModifier');
 var SequentialLayout = require('../views/SequentialLayout');
 var FlexibleLayout = require('../views/FlexibleLayout');
+var RenderController = require('../views/RenderController');
 var GridLayout = require('../views/GridLayout');
 var Utility = require('../utilities/Utility');
 var Easing = require('../transitions/Easing');
@@ -288,9 +289,53 @@ function addFlexibleLayout() {
     ctx.add(modifier).add(layout);
 }
 
+/*
+ * RenderController
+ */
+function addRenderController() {
+    var modifier = new Modifier({
+        size: [200, 200],
+        transform: Transform.translate(400, 0)
+    });
+
+    var controller = new RenderController();
+
+    var index = 0;
+    var items = [];
+
+    function getItem(i) {
+        var surface = new Surface({
+            content: 'View ' + i,
+            properties: {
+                backgroundColor: getRandomColor(),
+                color: 'white',
+                lineHeight: '200px',
+                textAlign: 'center',
+                fontSize: '30px',
+                cursor: 'pointer'
+            }
+        });
+
+        surface.on('click', function() {
+            index = (index + 1) % items.length;
+            controller.show(items[index]);
+        });
+
+        return surface;
+    }
+
+    for (var i = 0; i < 4; i++) {
+        items.push(getItem(i));
+    }
+
+    controller.show(items[index]);
+    ctx.add(modifier).add(controller);
+}
+
 addStateModifier();
 addContainerSurface();
 addSequentialLayout();
 addCanvasSurface();
 addGridLayout();
 addFlexibleLayout();
+addRenderController();
