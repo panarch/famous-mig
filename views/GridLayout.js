@@ -4,18 +4,17 @@
 
 var Size = require('famous/components/Size');
 
-var View = require('../core/View');
-var Timer = require('../utilities/Timer');
+var Layout = require('./Layout');
 
 function GridLayout(options) {
-    View.apply(this, arguments);
+    Layout.apply(this, arguments);
 
     this.dimensions = options && options.dimensions !== undefined ?
         options.dimensions :
         [1, 1];
 }
 
-GridLayout.prototype = Object.create(View.prototype);
+GridLayout.prototype = Object.create(Layout.prototype);
 GridLayout.prototype.constructor = GridLayout;
 
 GridLayout.prototype._sequenceFrom = function _sequenceFrom(views) {
@@ -36,17 +35,6 @@ GridLayout.prototype._sequenceFrom = function _sequenceFrom(views) {
             .setMountPoint(0, 0)
             .setPosition(x, y);
     }
-};
-
-GridLayout.prototype.sequenceFrom = function sequenceFrom(views) {
-    // run it after all nodes are initialized
-    for (var i = 0; i < views.length; i++) {
-        var view = views[i];
-        if (!view.node)
-            this.add(view);
-    }
-
-    Timer.after(this._sequenceFrom.bind(this, views), 1);
 };
 
 module.exports = GridLayout;

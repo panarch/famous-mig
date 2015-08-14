@@ -4,19 +4,18 @@
 
 var Size = require('famous/components/Size');
 
-var View = require('../core/View');
-var Timer = require('../utilities/Timer');
+var Layout = require('./Layout');
 var Utility = require('../utilities/Utility');
 
 function SequentialLayout(options) {
-    View.apply(this, arguments);
+    Layout.apply(this, arguments);
 
     this.direction = options && options.direction !== undefined ?
         options.direction :
         Utility.Direction.Y;
 }
 
-SequentialLayout.prototype = Object.create(View.prototype);
+SequentialLayout.prototype = Object.create(Layout.prototype);
 SequentialLayout.prototype.constructor = SequentialLayout;
 
 SequentialLayout.prototype._sequenceFrom = function _sequenceFrom(views) {
@@ -39,17 +38,6 @@ SequentialLayout.prototype._sequenceFrom = function _sequenceFrom(views) {
                 length += size[1];
         }
     }
-};
-
-SequentialLayout.prototype.sequenceFrom = function sequenceFrom(views) {
-    // run it after all nodes are initialized
-    for (var i = 0; i < views.length; i++) {
-        var view = views[i];
-        if (!view.node)
-            this.add(view);
-    }
-
-    Timer.after(this._sequenceFrom.bind(this, views), 1);
 };
 
 module.exports = SequentialLayout;

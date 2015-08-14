@@ -4,8 +4,11 @@
 
 var View = require('../core/View');
 
-function RenderController() {
+function RenderController(options) {
     View.apply(this, arguments);
+    this.options = options ?
+        options :
+        {};
 
     this._currentView = null;
 }
@@ -27,10 +30,15 @@ RenderController.prototype.show = function show(view) {
 };
 
 RenderController.prototype.hide = function hide() {
-    if (!this._currentView) return;
+    if (!this._currentView || !this._currentView.node) return;
 
     this._currentView.node.setScale(0, 0);
     this._currentView = null;
 };
+
+RenderController.prototype.inTransformFrom = function inTransformFrom() {};
+RenderController.prototype.outTransformFrom = function outTransformFrom() {};
+RenderController.prototype.inOpacityFrom = function inOpacityFrom() {};
+RenderController.prototype.outOpacityFrom = function outOpacityFrom() {};
 
 module.exports = RenderController;

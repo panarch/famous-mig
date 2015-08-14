@@ -4,11 +4,10 @@
 
 var Size = require('famous/components/Size');
 
-var View = require('../core/View');
-var Timer = require('../utilities/Timer');
+var Layout = require('./Layout');
 
 function FlexibleLayout(options) {
-    View.apply(this, arguments);
+    Layout.apply(this, arguments);
 
     this.direction = options && options.direction ?
         options.direction :
@@ -22,7 +21,7 @@ function FlexibleLayout(options) {
 FlexibleLayout.DIRECTION_X = 0;
 FlexibleLayout.DIRECTION_Y = 1;
 
-FlexibleLayout.prototype = Object.create(View.prototype);
+FlexibleLayout.prototype = Object.create(Layout.prototype);
 FlexibleLayout.prototype.constructor = FlexibleLayout;
 
 FlexibleLayout.prototype._calculateSum = function _calculateSum() {
@@ -95,17 +94,6 @@ FlexibleLayout.prototype._sequenceFrom = function _sequenceFrom(views) {
 
         pos += _length;
     }
-};
-
-FlexibleLayout.prototype.sequenceFrom = function sequenceFrom(views) {
-    // run it after all nodes are initialized
-    for (var i = 0; i < views.length; i++) {
-        var view = views[i];
-        if (!view.node)
-            this.add(view);
-    }
-
-    Timer.after(this._sequenceFrom.bind(this, views), 1);
 };
 
 module.exports = FlexibleLayout;
