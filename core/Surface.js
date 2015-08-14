@@ -232,4 +232,8 @@ Surface.prototype.deploy = function deploy() {
     this.eventOutput.emit('deploy');
 };
 
+Surface.prototype.getSizedNode = function getSizedNode() {
+    return this.node;
+};
+
 module.exports = Surface;

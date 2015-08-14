@@ -16,8 +16,8 @@ var Surface = require('../core/Surface');
 var View = require('../core/View');
 
 function StateModifier(options) {
-    this.node = null;
-    this._queue = [];
+    View.apply(this, arguments);
+
     this._onLoadCallbacks = [];
 
     this.transform = options.transform ? options.transform : null;
@@ -43,6 +43,9 @@ function StateModifier(options) {
     this._sizeComp = null;
     this._opacityComp = null;
 }
+
+StateModifier.prototype = Object.create(View.prototype);
+StateModifier.prototype.constructor = StateModifier;
 
 function _setComponentValue(component, value, options, callback) {
     component.set.apply(component, value.concat(options).concat(callback));
@@ -156,9 +159,6 @@ StateModifier.prototype.setProportions = function setProportions(proportions) {
     this.node.setProportionalSize.apply(this.node, proportions);
 };
 
-StateModifier.prototype.add = View.prototype.add;
-StateModifier.prototype._setNode = View.prototype._setNode;
-
 StateModifier.prototype.setNode = function setNode(node) {
     this._setNode(node);
     this.el = new DOMElement(node, {});
@@ -187,6 +187,10 @@ StateModifier.prototype.setNode = function setNode(node) {
     for (i = 0; i < this._onLoadCallbacks.length; i++) {
         this._onLoadCallbacks[i]();
     }
+};
+
+StateModifier.prototype.getSizedNode = function getSizedNode() {
+    return this.node;
 };
 
 module.exports = StateModifier;

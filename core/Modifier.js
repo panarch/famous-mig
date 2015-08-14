@@ -6,8 +6,7 @@ var Surface = require('./Surface');
 var View = require('./View');
 
 function Modifier(options) {
-    this.node = null;
-    this._queue = [];
+    View.apply(this, arguments);
 
     this.transform = null;
     this.opacity = null;
@@ -25,6 +24,9 @@ function Modifier(options) {
         if (options.proportions) this.proportionsFrom(options.proportions);
     }
 }
+
+Modifier.prototype = Object.create(View.prototype);
+Modifier.prototype.constructor = Modifier;
 
 Modifier.prototype.transformFrom = function transformFrom(transform) {
     this.transform = transform;
@@ -76,9 +78,6 @@ Modifier.prototype.setOrigin = Modifier.prototype.originFrom;
 Modifier.prototype.setSize = Surface.prototype.setSize;
 Modifier.prototype.setProportions = Modifier.prototype.proportionsFrom;
 
-Modifier.prototype.add = View.prototype.add;
-Modifier.prototype._setNode = View.prototype._setNode;
-
 Modifier.prototype.setNode = function setNode(node) {
     this._setNode(node);
 
@@ -92,6 +91,10 @@ Modifier.prototype.setNode = function setNode(node) {
     if (this.opacity !== null) this.opacityFrom(this.opacity);
     if (this.transform) this.transformFrom(this.transform);
     if (this.proportions) this.proportionsFrom(this.proportions);
+};
+
+Modifier.prototype.getSizedNode = function getSizedNode() {
+    return this.node;
 };
 
 module.exports = Modifier;

@@ -9,6 +9,7 @@ function ContainerSurface(options) {
     Surface.apply(this, arguments);
 
     this._queue = [];
+    this._children = [];
 }
 
 ContainerSurface.prototype = Object.create(Surface.prototype);

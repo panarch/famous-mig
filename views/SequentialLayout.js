@@ -24,8 +24,12 @@ SequentialLayout.prototype._sequenceFrom = function _sequenceFrom(views) {
     for (var i = 0; i < views.length; i++) {
         var view = views[i];
         var node = view.node;
-        var sizeMode = node.getSizeMode();
-        var size = node.getAbsoluteSize();
+        var sizedNode = view.getSizedNode();
+        if (!sizedNode)
+            continue;
+
+        var sizeMode = sizedNode.getSizeMode();
+        var size = sizedNode.getAbsoluteSize();
 
         if (this.direction === Utility.Direction.X) {
             node.setPosition(length, 0);

@@ -12,6 +12,7 @@ function View() {
     EventHandler.setOutputHandler(this, this._eventOutput);
 
     this._queue = [];
+    this._children = [];
 }
 
 View.prototype._setNode = function _setNode(node) {
@@ -29,6 +30,8 @@ View.prototype.setNode = function setNode(node) {
 };
 
 View.prototype.add = function add(view) {
+    this._children.push(view);
+
     if (!this.node) {
         this._queue.push(view);
         return view;
@@ -38,6 +41,13 @@ View.prototype.add = function add(view) {
     view.setNode(child);
 
     return view;
+};
+
+View.prototype.getSizedNode = function getSizedNode() {
+    if (!this.node || this._children.length !== 1)
+        return null;
+
+    return this._children[0].getSizedNode();
 };
 
 module.exports = View;
