@@ -3,7 +3,6 @@
 'use strict';
 
 var _node;
-
 function setNode(node) {
     _node = node;
 }
@@ -28,5 +27,6 @@ function after(fn, numTicks) {
 
 module.exports = {
     setNode: setNode,
-    after: after
+    after: after,
+    setTimeout: setTimeout
 };
