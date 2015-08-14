@@ -5,7 +5,6 @@
 var Size = require('famous/components/Size');
 
 var Layout = require('./Layout');
-var Timer = require('../utilities/Timer');
 
 function FlexibleLayout(options) {
     Layout.apply(this, arguments);
@@ -17,9 +16,6 @@ function FlexibleLayout(options) {
     this.ratios = options && options.ratios ?
         options.ratios :
         [];
-
-    // temp
-    this._temp = 0;
 }
 
 FlexibleLayout.DIRECTION_X = 0;
@@ -59,13 +55,7 @@ FlexibleLayout.prototype._calculateAbsoluteLength = function _calculateAbsoluteL
 };
 
 FlexibleLayout.prototype._sequenceFrom = function _sequenceFrom(views) {
-    if (this._temp++ < 1) {
-        Timer.after(this._sequenceFrom.bind(this, views), 10);
-        return;
-    }
-
     var size = this.node.getSize();
-    console.log('flexible layout', size, views);
     var sum = this._calculateSum();
     var length = this._calculateAbsoluteLength(views);
     var pos = 0;
@@ -73,7 +63,6 @@ FlexibleLayout.prototype._sequenceFrom = function _sequenceFrom(views) {
     var isHorizontal = this.direction === FlexibleLayout.DIRECTION_X;
 
     for (var i = 0; i < views.length; i++) {
-        console.log('index', i);
         var view = views[i];
         var node = view.node;
         var sizedNode = view.getSizedNode();

@@ -15,10 +15,11 @@ Layout.prototype = Object.create(View.prototype);
 Layout.prototype.constructor = Layout;
 
 Layout.prototype.sequenceFrom = function sequenceFrom(views) {
+    this._views = views;
+
     // run it after all nodes are initialized
     if (!this.node) {
         this._pending = true;
-        this._views = views;
         return;
     }
 
@@ -38,6 +39,12 @@ Layout.prototype.setNode = function setNode(node) {
         this._pending = false;
         this.sequenceFrom(this._views);
     }
+
+    this.node.addComponent({
+        onSizeChange: (function() {
+            this._sequenceFrom(this._views);
+        }).bind(this)
+    });
 };
 
 module.exports = Layout;
