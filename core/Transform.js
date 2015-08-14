@@ -3,9 +3,9 @@
 'use strict';
 
 function Transform() {
-    this._position = null;
-    this._rotation = null;
-    this._scale = null;
+    this._position = [0, 0, 0];
+    this._rotation = [0, 0, 0];
+    this._scale = [1, 1, 1];
 }
 
 Transform.prototype.getPosition = function getPosition() {
@@ -21,9 +21,6 @@ Transform.prototype.getScale = function getScale() {
 };
 
 Transform.identity = new Transform();
-Transform.identity._position = [0, 0, 0];
-Transform.identity._rotation = [0, 0, 0];
-Transform.identity._scale = [1, 1, 1];
 
 Transform.translate = function(x, y, z) {
     var transform = new Transform();
