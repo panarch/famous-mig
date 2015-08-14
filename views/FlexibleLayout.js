@@ -81,16 +81,14 @@ FlexibleLayout.prototype._sequenceFrom = function _sequenceFrom(views) {
             _length = 1.0 * ratio / sum * (size[0] - length);
 
             node
-                .setSizeMode(Size.ABSOLUTE, Size.RELATIVE)
-                .setProportionalSize(null, 1)
+                .setSizeMode(Size.ABSOLUTE, null)
                 .setAbsoluteSize(_length, null);
         }
         else {
             _length = 1.0 * ratio / sum * (size[1] - length);
 
             node
-                .setSizeMode(Size.RELATIVE, Size.ABSOLUTE)
-                .setProportionalSize(1, null)
+                .setSizeMode(null, Size.ABSOLUTE)
                 .setAbsoluteSize(null, _length);
         }
 
