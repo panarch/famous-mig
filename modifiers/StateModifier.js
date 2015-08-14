@@ -14,18 +14,18 @@ var Opacity = require('famous/components/Opacity');
 
 var Surface = require('../core/Surface');
 var View = require('../core/View');
-var Timer = require('../utilities/Timer');
 
 function StateModifier(options) {
     this.node = null;
     this._queue = [];
+    this._onLoadCallbacks = [];
 
-    this.transform = null;
-    this.opacity = null;
-    this.origin = null;
-    this.align = null;
-    this.size = null;
-    this.proportions = null;
+    this.transform = options.transform ? options.transform : null;
+    this.opacity = options.opacity !== undefined ? options.opacity : null;
+    this.origin = options.origin ? options.origin : null;
+    this.align = options.align ? options.align : null;
+    this.size = options.size ? options.size : null;
+    this.proportions = options.proportions ? options.proportions : null;
 
     this.transformOptions = null;
     this.opacityOptions = null;
@@ -42,15 +42,6 @@ function StateModifier(options) {
     this._mountPointComp = null;
     this._sizeComp = null;
     this._opacityComp = null;
-
-    if (options) {
-        if (options.transform) this.setTransform(options.transform);
-        if (options.opacity !== null) this.setOpacity(options.opacity);
-        if (options.origin) this.setOrigin(options.origin);
-        if (options.align) this.setAlign(options.align);
-        if (options.size) this.setSize(options.size);
-        if (options.proportions) this.setProportions(options.proportions);
-    }
 }
 
 function _setComponentValue(component, value, options, callback) {
@@ -81,13 +72,13 @@ StateModifier.prototype.setTransform = function setTransform(transform, options,
         if (scale) _setComponentValue(this._scaleComp, scale, options, callback);
     }
     else if (options) {
-        Timer.after((function() {
+        this._onLoadCallbacks.push((function() {
             this.transform = transform;
             this.transformOptions = options;
             if (position) _setComponentValue(this._positionComp, position, options, callback);
             if (rotation) _setComponentValue(this._rotationComp, rotation, options, callback);
             if (scale) _setComponentValue(this._scaleComp, scale, options, callback);
-        }).bind(this), 1);
+        }).bind(this));
 
         return;
     }
@@ -101,11 +92,11 @@ StateModifier.prototype.setOpacity = function setOpacity(opacity, options, callb
         this._opacityComp.set(opacity, options, callback);
     }
     else if (options) {
-        Timer.after((function() {
+        this._onLoadCallbacks.push((function() {
             this.opacity = opacity;
             this.opacityOptions = options;
             this._opacityComp.set(opacity, options, callback);
-        }).bind(this), 1);
+        }).bind(this));
 
         return;
     }
@@ -122,12 +113,12 @@ StateModifier.prototype.setOrigin = function setOrigin(origin, options, callback
         _setComponentValue(this._mountPointComp, origin, options);
     }
     else if (options) {
-        Timer.after((function() {
+        this._onLoadCallbacks.push((function() {
             this.origin = origin;
             this.originOptions = options;
             _setComponentValue(this._originComp, origin, options, callback);
             _setComponentValue(this._mountPointComp, origin, options);
-        }).bind(this), 1);
+        }).bind(this));
 
         return;
     }
@@ -143,11 +134,11 @@ StateModifier.prototype.setAlign = function setAlign(align, options, callback) {
         _setComponentValue(this._alignComp, align, options, callback);
     }
     else if (options) {
-        Timer.after((function() {
+        this._onLoadCallbacks.push((function() {
             this.align = align;
             this.alignOptions = options;
             _setComponentValue(this._alignComp, align, options, callback);
-        }).bind(this), 1);
+        }).bind(this));
 
         return;
     }
@@ -172,7 +163,8 @@ StateModifier.prototype.setNode = function setNode(node) {
     this._setNode(node);
     this.el = new DOMElement(node, {});
 
-    for (var i = 0; i < this._queue.length; i++) {
+    var i;
+    for (i = 0; i < this._queue.length; i++) {
         this._queue[i].setNode(this.node.addChild());
     }
 
@@ -186,11 +178,15 @@ StateModifier.prototype.setNode = function setNode(node) {
     this._opacityComp = new Opacity(node);
 
     if (this.size) this.setSize(this.size);
-    if (this.origin) this.setOrigin(this.origin, this.originOptions);
-    if (this.align) this.setAlign(this.align, this.alignOptions);
-    if (this.opacity !== null) this.setOpacity(this.opacity, this.opacityOptions);
-    if (this.transform) this.setTransform(this.transform, this.transformOptions);
+    if (this.origin) this.setOrigin(this.origin);
+    if (this.align) this.setAlign(this.align);
+    if (this.opacity !== null) this.setOpacity(this.opacity);
+    if (this.transform) this.setTransform(this.transform);
     if (this.proportions) this.setProportions(this.proportions);
+
+    for (i = 0; i < this._onLoadCallbacks.length; i++) {
+        this._onLoadCallbacks[i]();
+    }
 };
 
 module.exports = StateModifier;
