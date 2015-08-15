@@ -24,7 +24,7 @@ function after(fn, numTicks) {
     };
 
     var componentId = _node.addComponent(component);
-    _node.requestUpdateOnNextTick(componentId);
+    _node.requestUpdate(componentId);
 }
 
 function setTimeout(fn, duration) {
@@ -35,6 +35,7 @@ function setTimeout(fn, duration) {
             if (time - beginTime > duration) {
                 fn.apply(this, arguments);
                 _node.removeComponent(component);
+                return;
             }
 
             _node.requestUpdateOnNextTick(componentId);
@@ -42,7 +43,7 @@ function setTimeout(fn, duration) {
     };
 
     var componentId = _node.addComponent(component);
-    _node.requestUpdateOnNextTick(componentId);
+    _node.requestUpdate(componentId);
 }
 
 module.exports = {
