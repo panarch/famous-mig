@@ -15,20 +15,33 @@ Layout.prototype = Object.create(View.prototype);
 Layout.prototype.constructor = Layout;
 
 Layout.prototype.sequenceFrom = function sequenceFrom(views) {
-    this._views = views;
-
     // run it after all nodes are initialized
     if (!this.node) {
         this._pending = true;
+        this._views = views;
         return;
     }
 
-    for (var i = 0; i < views.length; i++) {
+    // compare _views and views
+    var i;
+    if (this._views !== views) {
+        for (i = 0; i < this._views.length; i++) {
+            var _view = this._views[i];
+            if (views.indexOf(_view) === -1) {
+                _view.node.setOpacity(0);
+            }
+        }
+    }
+
+    for (i = 0; i < views.length; i++) {
         var view = views[i];
         if (!view.node)
             this.add(view);
+
+        view.node.setOpacity(1);
     }
 
+    this._views = views;
     this._sequenceFrom(views);
 };
 
