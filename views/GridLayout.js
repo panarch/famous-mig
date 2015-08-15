@@ -29,9 +29,18 @@ GridLayout.prototype._sequenceFrom = function _sequenceFrom(views) {
         var x = w * (i % cols);
         var y = h * ((i / cols) | 0);
 
+        var sizeMode = view.node.getSizeMode();
+        if (sizeMode[0] !== Size.ABSOLUTE ||
+            sizeMode[1] !== Size.ABSOLUTE) {
+            view._gridSizeFlag = true;
+            view.node
+                .setSizeMode(Size.ABSOLUTE, Size.ABSOLUTE);
+        }
+
+        if (view._gridSizeFlag)
+            view.node.setAbsoluteSize(w, h);
+
         view.node
-            .setSizeMode(Size.ABSOLUTE, Size.ABSOLUTE)
-            .setAbsoluteSize(w, h)
             .setMountPoint(0, 0)
             .setPosition(x, y);
     }
