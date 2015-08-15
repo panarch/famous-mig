@@ -44,7 +44,7 @@ View.prototype.add = function add(view) {
 };
 
 View.prototype.getSizedNode = function getSizedNode() {
-    if (!this.node || this._children.length !== 1)
+    if (!this.node || this._children.length === 0)
         return null;
 
     return this._children[0].getSizedNode();
