@@ -49,11 +49,16 @@ Surface.prototype.elementType = 'div';
 Surface.prototype.elementClass = 'famous-surface';
 
 Surface.prototype.setAttributes = function setAttributes(attributes) {
+    for (var n in attributes) {
+        this.attributes[n] = attributes[n];
+        if (this.el) this.el.setAttribute(n, attributes[n]);
+    }
 
+    return this;
 };
 
 Surface.prototype.getAttributes = function getAttributes() {
-
+    return this.attributes;
 };
 
 Surface.prototype.setProperties = function setProperties(properties) {
@@ -117,9 +122,22 @@ Surface.prototype.getClassList = function getClasses() {
 };
 
 Surface.prototype.setContent = function setContent(content) {
-    // if it is not string...
     this.content = content;
-    if (this.el) this.el.setContent(this.content);
+    if (!this.el) return;
+
+    if (typeof content === 'string') {
+        this.el.setContent(content);
+        return;
+    }
+
+    if (!this._currentTarget) return;
+
+    // dom object
+    if (this.content instanceof Node) {
+        var target = this._currentTarget;
+        while (target.hasChildNodes()) target.removeChild(target.firstChild);
+        target.appendChild(content);
+    }
 };
 
 Surface.prototype.setOptions = function setOptions(options) {
@@ -229,7 +247,10 @@ Surface.prototype.setNode = function setNode(node) {
 };
 
 Surface.prototype.deploy = function deploy() {
-    this.eventOutput.emit('deploy');
+    if (this.content && this.content instanceof Node)
+        this.setContent(this.content);
+
+    this._eventOutput.emit('deploy');
 };
 
 Surface.prototype.getSizedNode = function getSizedNode() {
