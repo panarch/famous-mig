@@ -229,13 +229,7 @@ Surface.prototype._setNode = function _setNode(node) {
     }
 
     this.node.onReceive = (function(event, payload) {
-        if (!this._uiEvent[event]) return;
-
-        // not supported
-        payload.preventDefault = function() {};
-        payload.stopPropagation = function() {};
-
-        this._uiEvent[event](payload);
+        if (this._uiEvent[event]) this._uiEvent[event](payload);
     }).bind(this);
 
     if (this.useTarget)
