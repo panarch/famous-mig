@@ -28,7 +28,7 @@ Layout.prototype.sequenceFrom = function sequenceFrom(views) {
         for (i = 0; i < this._views.length; i++) {
             var _view = this._views[i];
             if (views.indexOf(_view) === -1) {
-                _view.node.setOpacity(0);
+                _view.node.hide();
             }
         }
     }
@@ -38,7 +38,7 @@ Layout.prototype.sequenceFrom = function sequenceFrom(views) {
         if (!view.node)
             this.add(view);
 
-        view.node.setOpacity(1);
+        view.node.show();
     }
 
     this._views = views;
