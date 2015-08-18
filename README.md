@@ -3,7 +3,34 @@
 
 ###Installation
 
-```npm install famous-mig```
+1. In your project,
+```
+npm install famous-mig
+npm install babelify
+// Add babelify transform to your package.json
+```
+2. Remove loading famous.css
+3. Insert this to your html which engine#0.7 uses
+```
+<style>
+  html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+  }
+  body {
+    position: absolute;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-perspective: 0;
+    perspective: none;
+    overflow: hidden;
+  }
+</style>
+```
 
 Currently, it depends on engine's develop branch, not 0.7.1.
 
