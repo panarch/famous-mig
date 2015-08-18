@@ -39,6 +39,7 @@ var spinner = logo.addComponent({
 logo.requestUpdate(spinner);
 */
 
+require('famous/core/famous.css');
 var Engine = require('../core/Engine');
 var Surface = require('../core/Surface');
 var Modifier = require('../core/Modifier');

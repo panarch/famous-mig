@@ -19,6 +19,7 @@
   },
   "browserify": {
     "transform": [
+      "cssify",
       "babelify"
     ]
   },
@@ -37,6 +38,7 @@
   "author": "Taehoon Moon <panarch@kaist.ac.kr>",
   "license": "MIT",
   "dependencies": {
-    "babelify": "^6.0.1"
+    "babelify": "^6.0.1",
+    "cssify": "^0.7.0"
   }
 }
